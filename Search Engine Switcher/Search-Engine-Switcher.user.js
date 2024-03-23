@@ -21,7 +21,7 @@
 // @match        *://www.douban.com/search*
 // @match        *://search.bilibili.com/*
 // @match        *://www.youtube.com/results?search_query=*
-// @license      MIT License
+// @license      MIT
 // @grant        unsafeWindow
 // @grant        window.onload
 // @grant        GM_getValue

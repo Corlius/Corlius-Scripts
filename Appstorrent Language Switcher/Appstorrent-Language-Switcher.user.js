@@ -8,7 +8,7 @@
 // @author          Corlius
 // @homepageURL     https://github.com/Corlius/Corlius-Scripts
 // @icon            https://www.google.com/s2/favicons?sz=64&domain=appstorrent.ru
-// @license         MIT License
+// @license         MIT
 // @match           https://appstorrent.ru/*
 // @grant           GM_getValue
 // @grant           GM_setValue
