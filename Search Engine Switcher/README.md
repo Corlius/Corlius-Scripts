@@ -4,5 +4,5 @@
 
 ### 如何安装
 
-- 请使用脚本管理器安装，推荐使用Violenmonkey。
-- 从Greasy Fork安装： https://greasyfork.org/zh-CN/scripts/490643
+- 请使用脚本管理器安装，推荐使用 [Violentmonkey](https://violentmonkey.github.io/get-it/)。
+- 从Greasy Fork安装脚本： https://greasyfork.org/zh-CN/scripts/490643
