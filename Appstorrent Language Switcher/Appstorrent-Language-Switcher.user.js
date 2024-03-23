@@ -2,7 +2,7 @@
 // @name            Appstorrent 翻译切换器
 // @name:en         Appstorrent Language Switcher
 // @namespace       https://greasyfork.org/zh-CN/scripts/490641
-// @version         1.0
+// @version         1.1
 // @description     为appstorrent.ru自动切换翻译语言
 // @description:en  Automatically switch translation language for appstorrent.ru
 // @author          Corlius
@@ -51,19 +51,15 @@
     // 检查当前页面是否是详情页
     var isDetailsPage = window.location.pathname.endsWith(".html");
 
-    // 监听页面语言变化并更新
-    var observer = new MutationObserver(function(mutations) {
+    // 每1.5秒监听一次页面语言变化并更新
+    setInterval(function() {
         var currentLang = document.documentElement.getAttribute('lang');
         var targetLang = isDetailsPage ? detailsPageLang : otherPageLang;
 
         if (currentLang !== targetLang) {
             changeLanguage(targetLang);
-        } else {
-            observer.disconnect();
         }
-    });
-
-    observer.observe(document.documentElement, { attributes: true });
+    }, 1500);
 
     // 添加语言选择命令到菜单
     GM_registerMenuCommand('设置详情页语言 / Set details page language', function() {
