@@ -5,6 +5,7 @@
 // @description  用于快速切换搜索引擎。有漂亮的高斯模糊外观和深色模式适配。当您滚动网页时，侧栏会自动收起，而当鼠标靠近时，侧栏则会弹出。您可以修改脚本以添加或重新排序搜索引擎。
 // @author       Corlius
 // @homepageURL  https://github.com/Corlius/Corlius-Scripts
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=bing.com
 // @match        *://www.baidu.com/s*
 // @match        *://www.baidu.com/baidu*
 // @match        *://duckduckgo.com/*
