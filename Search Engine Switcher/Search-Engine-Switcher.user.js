@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         搜索引擎切换器魔改版
 // @namespace    https://greasyfork.org/zh-CN/scripts/490643
-// @version      1.0
+// @version      1.1
 // @description  用于快速切换搜索引擎。有漂亮的高斯模糊外观和深色模式适配。当您滚动网页时，侧栏会自动收起，而当鼠标靠近时，侧栏则会弹出。您可以修改脚本以添加或重新排序搜索引擎。
 // @author       Corlius
 // @homepageURL  https://github.com/Corlius/Corlius-Scripts
@@ -19,6 +19,8 @@
 // @match        *://search.cnki.com.cn/Search/Result*
 // @match        *://www.sogou.com/web*
 // @match        *://fsoufsou.com/search*
+// @match        *://www.xiaohongshu.com/search_result/*
+// @match        *://www.douyin.com/search/*
 // @match        *://www.douban.com/search*
 // @match        *://search.bilibili.com/*
 // @match        *://www.youtube.com/results?search_query=*
@@ -57,34 +59,46 @@ const urlMapping = [
     testUrl: /https:\/\/duckduckgo.com\/*/,
   },
   {
-    name: "Bilibili",
-    searchUrl: "https://search.bilibili.com/all?keyword=",
-    keyName: "keyword",
-    testUrl: /https:\/\/search.bilibili.com\/all.*/,
-  },
-  {
     name: "YouTube",
     searchUrl: "https://www.youtube.com/results?search_query=",
     keyName: "search_query",
     testUrl: /https:\/\/www.youtube.com\/results.*/,
   },
   {
+    name: "BiliBili",
+    searchUrl: "https://search.bilibili.com/all?keyword=",
+    keyName: "keyword",
+    testUrl: /https:\/\/search.bilibili.com\/all.*/,
+  },
+  {
+    name: "Douyin",
+    searchUrl: "https://www.douyin.com/search/",
+    keyName: "",
+    testUrl: /https:\/\/www.douyin.com\/search.*/,
+  },
+  {
     name: "Baidu",
     searchUrl: "https://www.baidu.com/s?wd=",
     keyName: "wd",
-    testUrl: /https:\/\/www.baidu.com\/s.*/,
+    testUrl: /https:\/\/www.baidu.com\/.*/,
   },
   {
-    name: "WeChat",
-    searchUrl: "https://weixin.sogou.com/weixin?type=2&s_from=input&query=",
-    keyName: "query",
-    testUrl: /https:\/\/weixin.sogou.com\/weixin.*/,
+    name: "RedBook",
+    searchUrl: "https://www.xiaohongshu.com/search_result?keyword=",
+    keyName: "keyword",
+    testUrl: /https:\/\/www.xiaohongshu.com\/search_result.*/,
   },
   {
     name: "Douban",
     searchUrl: "https://www.douban.com/search?q=",
     keyName: "q",
     testUrl: /https:\/\/www.douban.com\/search.*/,
+  },
+  {
+    name: "WeChat",
+    searchUrl: "https://weixin.sogou.com/weixin?type=2&s_from=input&query=",
+    keyName: "query",
+    testUrl: /https:\/\/weixin.sogou.com\/weixin.*/,
   },
   {
     name: "Zhihu",
@@ -107,7 +121,8 @@ function getQueryVariable(variable) {
   for (let varPair of vars) {
     let [key, value] = varPair.split("=");
     if (key === variable) {
-      return decodeURIComponent(value);
+      // 对提取出的参数值进行URI解码
+      return decodeURI(decodeURIComponent(value));
     }
   }
   return null;
@@ -115,8 +130,28 @@ function getQueryVariable(variable) {
 
 // 从当前URL中提取搜索关键词
 function getKeywords() {
+  const hostname = window.location.hostname;
+  const pathname = window.location.pathname;
+  const url = window.location.href;
+
+  // 特殊处理抖音搜索关键词
+  if (hostname === 'www.douyin.com' && pathname.startsWith('/search/')) {
+    const keywordPattern = /^\/search\/([^?]+)/;
+    const match = pathname.match(keywordPattern);
+    if (match && match[1]) {
+      return decodeURIComponent(match[1]);
+    }
+  }
   for (let mapping of urlMapping) {
-    if (mapping.testUrl.test(window.location.href)) {
+    if (mapping.name === "Baidu") {
+      const params = new URL(url).searchParams;
+      if (params.has('wd')) {
+        return params.get('wd');
+      } else if (url.includes('word=')) {
+        let wd = url.match(/word=([^&]*)/)[1];
+        return decodeURI(decodeURIComponent(wd));
+      }
+    } else if (mapping.testUrl.test(url)) {
       return getQueryVariable(mapping.keyName) || "";
     }
   }
@@ -159,6 +194,11 @@ function setupSearchLinks(keywords) {
   //if (window.location.hostname === 'www.youtube.com') {
   //  isDarkMode = true; // 强制深色模式
   //}
+
+  // 如果当前页面是DouYin，则设置为深色模式
+  if (window.location.hostname === 'www.douyin.com') {
+    isDarkMode = true; // 强制深色模式
+  }
 
   // 在文档中添加主容器
   const mainDiv = document.createElement("div");
@@ -229,7 +269,7 @@ function setupSearchLinks(keywords) {
   window.addEventListener("mousemove", function (event) {
     const rect = mainDiv.getBoundingClientRect();
     const dx = Math.abs(event.clientX - rect.right);
-    const dy = Math.abs(event.clientY - ( (rect.top + rect.bottom) / 2));
+    const dy = Math.abs(event.clientY - ((rect.top + rect.bottom) / 2));
     if (dx < 130 && dy < 200) {
       mainDiv.style.left = "0";
     }
@@ -238,7 +278,7 @@ function setupSearchLinks(keywords) {
 }
 
 // 页面加载完成后进行初始化
-window.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("DOMContentLoaded", function () {
   adjustForSpecificBrowsers(); // 调整特定浏览器的配置
   setupSearchLinks(getKeywords()); // 设置搜索链接
 });
