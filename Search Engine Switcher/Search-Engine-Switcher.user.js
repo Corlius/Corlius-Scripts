@@ -212,6 +212,7 @@ function setupSearchLinks(keywords) {
     fontFamily: "sans-serif",
     backgroundColor: isDarkMode ? 'hsla(0, 0%, 15%, .8)' : 'hsla(0, 0%, 98%, .8)',
     backdropFilter: "blur(10px)",
+    webkitBackdropFilter: "blur(10px)",
     borderRadius: "0 15px 15px 0",
     zIndex: "9999",
     transition: "left 0.5s ease-in-out", // 左侧滑动动画
