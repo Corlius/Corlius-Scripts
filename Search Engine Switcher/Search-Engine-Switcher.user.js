@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         搜索引擎切换器魔改版
 // @namespace    https://greasyfork.org/zh-CN/scripts/490643
-// @version      1.2
+// @version      1.3
 // @description  用于快速切换搜索引擎。有漂亮的高斯模糊外观和深色模式适配。当您滚动网页时，侧栏会自动收起，而当鼠标靠近时，侧栏则会弹出。您可以修改脚本以添加或重新排序搜索引擎。
 // @author       Corlius
 // @homepageURL  https://github.com/Corlius/Corlius-Scripts
@@ -271,10 +271,15 @@ function setupSearchLinks(keywords) {
     const rect = mainDiv.getBoundingClientRect();
     const dx = Math.abs(event.clientX - rect.right);
     const dy = Math.abs(event.clientY - ((rect.top + rect.bottom) / 2));
-    if (dx < 130 && dy < 200) {
+    var dxLimit = 130;
+    if (window.location.hostname === 'www.bing.com') {
+      dxLimit = 25;
+    }
+    if (dx < dxLimit && dy < 200) {
       mainDiv.style.left = "0";
     }
   });
+
 
 }
 
